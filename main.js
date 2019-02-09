@@ -1,15 +1,15 @@
 const JulianUtils = require( './utils/julian' );
 const MathUtils = require( './utils/math' );
 const Constants = require( './utils/constants' );
-const Planets = require( './bodies/planets' );
+const SolarSystem = require( './bodies/planets' );
 
 const testDate = JulianUtils.getDate( '2/8/2019' );
 
 const centuriesSinceJ2000 = ( testDate - JulianUtils.getJ2000() ) / Constants.JULIAN_CENTUTY_IN_DAYS;
-const generatedOrbitalElements = [];
-Planets.forEach( ( planet ) => {
+const planetKeys = Object.keys( SolarSystem );
+planetKeys.forEach( ( planetKey ) => {
+  const planet = SolarSystem[planetKey];
   const orbitals = {};
-  orbitals.name = planet.name;
   orbitals.T = testDate;
   // semi major axis (au)
   orbitals.a = planet.orbit.elements.a
@@ -55,7 +55,8 @@ Planets.forEach( ( planet ) => {
   // True anomaly
   orbitals.trueAnom = MathUtils.calcTrueAnom( orbitals.e, orbitals.eccAnom );
 
-  generatedOrbitalElements.push( orbitals );
-  console.log( orbitals );
+  planet.orbit.genOrbElems = orbitals;
 } );
+
+console.log( SolarSystem.mars );
 
