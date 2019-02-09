@@ -187,7 +187,7 @@ const pluto = {
   },
 };
 
-module.exports = {
+module.exports = [
   mercury,
   venus,
   mars,
@@ -196,4 +196,4 @@ module.exports = {
   uranus,
   neptune,
   pluto,
-};
+];
