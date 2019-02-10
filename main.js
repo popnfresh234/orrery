@@ -23,4 +23,4 @@ const app = ( function () {
   return { updateSolarSystem };
 }() );
 
-app.updateSolarSystem( '2/8/2019' );
+app.updateSolarSystem( '8/20/1997' );

@@ -49,6 +49,16 @@ const app = ( function () {
     return 2 * ( Math.atan( trueAnomArg ) / K );
   };
 
+  const calcRadiusVector = ( a, e, trueAnom ) => a * ( 1 - ( e ** 2 ) ) / ( 1 + ( e * Math.cos( toRadians( trueAnom ) ) ) );
+
+  const calcHelioCentric = ( a, e, i, trueAnom, lascNode, lPeri ) => {
+    const r = calcRadiusVector( a, e, trueAnom );
+    const x = r * ( Math.cos( toRadians( lascNode ) ) * Math.cos( toRadians( trueAnom + lPeri - lascNode ) ) - Math.sin( toRadians( lascNode ) ) * Math.sin( toRadians( trueAnom + lPeri - lascNode ) ) * Math.cos( toRadians( i ) ) );
+    const y = r * ( Math.sin( toRadians( lascNode ) ) * Math.cos( toRadians( trueAnom + lPeri - lascNode ) ) + Math.cos( toRadians( lascNode ) ) * Math.sin( toRadians( trueAnom + lPeri - lascNode ) ) * Math.cos( toRadians( i ) ) );
+    const z = r * ( Math.sin( toRadians( trueAnom + lPeri - lascNode ) ) * Math.sin( toRadians( i ) ) );
+    return { x, y, z };
+  };
+
   const calcCorrection = ( el, cY, cSinceJ2000, isAngle ) => {
     let correction = el + ( cY * cSinceJ2000 );
     if ( isAngle ) {
@@ -79,6 +89,16 @@ const app = ( function () {
 
     // True anomaly
     generatedOrbitals.trueAnom = calcTrueAnom( generatedOrbitals.e, generatedOrbitals.eccAnom );
+
+    // Heliocentric Coords
+    generatedOrbitals.helioCentricCoords = calcHelioCentric(
+      generatedOrbitals.a,
+      generatedOrbitals.e,
+      generatedOrbitals.i,
+      generatedOrbitals.trueAnom,
+      generatedOrbitals.lAscNode,
+      generatedOrbitals.lPeri,
+    );
     return generatedOrbitals;
   };
 
