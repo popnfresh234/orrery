@@ -1,6 +1,11 @@
+// Relative size factors from https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html
+// Scale factors from http://www.planetaryorbits.com/kepler-laws-orbital-elements.html
+
 const mercury = {
   display: 'Mercury',
   name: 'mercury',
+  rFactor: 0.383,
+  color: '#60597B',
   orbit: {
     elements: {
       a: { val: 0.38709843, deg: false },
@@ -28,6 +33,8 @@ const mercury = {
 const venus = {
   display: 'Venus',
   name: 'venus',
+  rFactor: 0.949,
+  color: '#E38E3E',
   orbit: {
     elements: {
       a: { val: 0.72333566, deg: false },
@@ -48,9 +55,36 @@ const venus = {
   },
 };
 
+const earth = {
+  display: 'Earth',
+  name: 'earth',
+  rFactor: 1,
+  color: '#00aeff',
+  orbit: {
+    elements: {
+      a: { val: 1.00000261, deg: false },
+      e: { val: 0.01671123, deg: false },
+      i: { val: -0.00001531, deg: true },
+      L: { val: 100.46457166, deg: true },
+      lPeri: { val: 102.93768193, deg: true },
+      lAscNode: { val: 0.0, deg: true },
+    },
+    cYs: {
+      a: { val: 0.00000562, deg: false },
+      e: { val: -0.00004392, deg: false },
+      i: { val: -0.01294668, deg: true },
+      L: { val: 35999.37244981, deg: true },
+      lPeri: { val: 0.32327364, deg: true },
+      lAscNode: { val: 0.0, deg: true },
+    },
+  },
+};
+
 const mars = {
   display: 'Mars',
   name: 'mars',
+  rFactor: 0.532,
+  color: '#CF7167',
   orbit: {
     elements: {
       a: { val: 1.52371034, deg: false },
@@ -74,6 +108,9 @@ const mars = {
 const jupiter = {
   display: 'Jupiter',
   name: 'jupiter',
+  scaleFactor: 2.5,
+  rFactor: 11.21,
+  color: '#9A7268',
   orbit: {
     elements: {
       a: {
@@ -103,6 +140,9 @@ const jupiter = {
 const saturn = {
   display: 'Saturn',
   name: 'saturn',
+  scaleFactor: 3.5,
+  rFactor: 9.45,
+  color: '#FEE3B8',
   orbit: {
     elements: {
       a: { val: 9.53667594, deg: false },
@@ -126,6 +166,9 @@ const saturn = {
 const uranus = {
   display: 'Uranus',
   name: 'uranus',
+  scaleFactor: 6.2,
+  rFactor: 4.01,
+  color: '#0D7EAA',
   orbit: {
     elements: {
       a: { val: 19.18916464, deg: false },
@@ -149,6 +192,9 @@ const uranus = {
 const neptune = {
   display: 'Neptune',
   name: 'neptune',
+  scaleFactor: 8.7,
+  rFactor: 3.88,
+  color: '#536BA7',
   orbit: {
     elements: {
       a: { val: 30.06992276, deg: false },
@@ -172,6 +218,9 @@ const neptune = {
 const pluto = {
   display: 'Pluto',
   name: 'pluto',
+  rFactor: 0.186,
+  scaleFactor: 8.7,
+  color: '#715138',
   orbit: {
     elements: {
       a: { val: 39.48211675, deg: false },
@@ -197,6 +246,7 @@ module.exports = {
   mercury,
   venus,
   mars,
+  earth,
   jupiter,
   saturn,
   uranus,

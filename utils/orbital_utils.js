@@ -51,9 +51,11 @@ const app = ( function () {
 
   const calcRadiusVector = ( a, e, trueAnom ) => a * ( 1 - ( e ** 2 ) ) / ( 1 + ( e * Math.cos( toRadians( trueAnom ) ) ) );
 
+  const calcSemiMinorAxis = ( e, a ) => Math.abs( Math.sqrt( Math.abs( ( e ** 2 ) - 1 ) ) * -a );
+
   const calcHelioCentric = ( a, e, i, trueAnom, lascNode, lPeri ) => {
     const r = calcRadiusVector( a, e, trueAnom );
-    const x = r * ( Math.cos( toRadians( lascNode ) ) * Math.cos( toRadians( trueAnom + lPeri - lascNode ) ) - Math.sin( toRadians( lascNode ) ) * Math.sin( toRadians( trueAnom + lPeri - lascNode ) ) * Math.cos( toRadians( i ) ) );
+    const x = r * ( ( Math.cos( toRadians( lascNode ) ) * Math.cos( toRadians( trueAnom + lPeri - lascNode ) ) ) - ( Math.sin( toRadians( lascNode ) ) * Math.sin( toRadians( trueAnom + lPeri - lascNode ) ) * Math.cos( toRadians( i ) ) ) );
     const y = r * ( Math.sin( toRadians( lascNode ) ) * Math.cos( toRadians( trueAnom + lPeri - lascNode ) ) + Math.cos( toRadians( lascNode ) ) * Math.sin( toRadians( trueAnom + lPeri - lascNode ) ) * Math.cos( toRadians( i ) ) );
     const z = r * ( Math.sin( toRadians( trueAnom + lPeri - lascNode ) ) * Math.sin( toRadians( i ) ) );
     return { x, y, z };
@@ -71,7 +73,7 @@ const app = ( function () {
   };
 
   // Data from https://ssd.jpl.nasa.gov/?planet_pos, valid 1800-2050
-  const generateOrbitals = ( planet, cSinceJ2000 ) => {
+  const calcOrbitals = ( planet, cSinceJ2000 ) => {
     const generatedOrbitals = {};
     const { elements, cYs } = planet.orbit;
     const keys = Object.keys( elements );
@@ -90,6 +92,9 @@ const app = ( function () {
     // True anomaly
     generatedOrbitals.trueAnom = calcTrueAnom( generatedOrbitals.e, generatedOrbitals.eccAnom );
 
+    // Semi minor axis
+    generatedOrbitals.b = calcSemiMinorAxis( generatedOrbitals.e, generatedOrbitals.a );
+
     // Heliocentric Coords
     generatedOrbitals.helioCentricCoords = calcHelioCentric(
       generatedOrbitals.a,
@@ -102,12 +107,30 @@ const app = ( function () {
     return generatedOrbitals;
   };
 
+  const calcScaledCoords = ( planet, x, y, WIDTH, HEIGHT ) => {
+    const SCALE = 13;
+    const scaleFactor = planet.scaleFactor ? planet.scaleFactor : 1;
+    const scaledX = ( WIDTH / 2 ) + ( x * SCALE / scaleFactor );
+    const scaledY = ( HEIGHT / 2 ) - ( y * SCALE / scaleFactor );
+    return { x: scaledX, y: scaledY };
+  };
+
+  const calcNormR = ( rFactor ) => {
+    const MAX = 40;
+    const MIN = 5;
+    const FLOOR = 5;
+    const r = ( ( rFactor * 100 - MIN ) / ( MAX - MIN ) ) + FLOOR;
+    return r;
+  };
   return {
-    generateOrbitals,
+    calcOrbitals,
+    calcScaledCoords,
+    calcNormR,
   };
 }() );
 
 module.exports = {
-  generateOrbitals: app.generateOrbitals,
-
+  calcOrbitals: app.calcOrbitals,
+  calcScaledCoords: app.calcScaledCoords,
+  calcNormR: app.calcNormR,
 };
