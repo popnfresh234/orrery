@@ -4,8 +4,11 @@
 const mercury = {
   display: 'Mercury',
   name: 'mercury',
+  scaleFactor: 1,
   rFactor: 0.383,
   color: '#60597B',
+  apiDate: '1985/7/22',
+  periDate: '1985/6/8',
   orbit: {
     elements: {
       a: { val: 0.38709843, deg: false },
@@ -33,8 +36,11 @@ const mercury = {
 const venus = {
   display: 'Venus',
   name: 'venus',
+  scaleFactor: 1,
   rFactor: 0.949,
   color: '#E38E3E',
+  apiDate: '1986/1/27',
+  periDate: '1985/10/7',
   orbit: {
     elements: {
       a: { val: 0.72333566, deg: false },
@@ -58,8 +64,11 @@ const venus = {
 const earth = {
   display: 'Earth',
   name: 'earth',
+  scaleFactor: 1,
   rFactor: 1,
   color: '#00aeff',
+  apiDate: '1987/7/5',
+  periDate: '1987/1/4',
   orbit: {
     elements: {
       a: { val: 1.00000261, deg: false },
@@ -83,8 +92,11 @@ const earth = {
 const mars = {
   display: 'Mars',
   name: 'mars',
+  scaleFactor: 1,
   rFactor: 0.532,
   color: '#CF7167',
+  apiDate: '1987/9/4',
+  periDate: '1988/8/13',
   orbit: {
     elements: {
       a: { val: 1.52371034, deg: false },
@@ -111,6 +123,8 @@ const jupiter = {
   scaleFactor: 2.5,
   rFactor: 11.21,
   color: '#9A7268',
+  apiDate: '1993/6/2',
+  periDate: '1999/5/8',
   orbit: {
     elements: {
       a: {
@@ -143,6 +157,8 @@ const saturn = {
   scaleFactor: 3.5,
   rFactor: 9.45,
   color: '#FEE3B8',
+  apiDate: '1988/10/8',
+  periDate: '2003/6/26',
   orbit: {
     elements: {
       a: { val: 9.53667594, deg: false },
@@ -169,6 +185,8 @@ const uranus = {
   scaleFactor: 6.2,
   rFactor: 4.01,
   color: '#0D7EAA',
+  apiDate: '2008/10/18',
+  periDate: '1966/10/7',
   orbit: {
     elements: {
       a: { val: 19.18916464, deg: false },
@@ -195,6 +213,8 @@ const neptune = {
   scaleFactor: 8.7,
   rFactor: 3.88,
   color: '#536BA7',
+  apiDate: '1963/6/23',
+  periDate: '1881/3/9',
   orbit: {
     elements: {
       a: { val: 30.06992276, deg: false },
@@ -221,6 +241,8 @@ const pluto = {
   rFactor: 0.186,
   scaleFactor: 8.7,
   color: '#715138',
+  apiDate: '2114/2/15',
+  periDate: '1989/9/5',
   orbit: {
     elements: {
       a: { val: 39.48211675, deg: false },

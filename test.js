@@ -589,7 +589,7 @@ function init() {
   infoImgX = orreryWidth - 30 - fullscreenImg.width - 30 - zoominImg.width - scaleCompressedImg.width - 19 - telescopeImg.width - topViewImg.width - 13;
   infoImgY = 28;
   detailImgX = canvas.width - 35;
-  detailImgY = 687;
+  detailImgY = 687;                           //yyyy/m/dd
   mercuryAphelionPoint = plotPlanet( 0, 1985, 7, 22, !1 );
   mercuryPerihelionPoint = plotPlanet( 0, 1985, 6, 8, !1 );
   venusAphelionPoint = plotPlanet( 1, 1986, 1, 27, !1 );
@@ -1597,8 +1597,8 @@ function toRadians( a ) {
 function round( a, b ) {
   return Number( `${Math.round(a + "e" + b)  }e-${  b}` );
 }
-function calculateFoci( a, b ) {
-  return Math.sqrt( Math.pow( a, 2 ) - Math.pow( b, 2 ) );
+function calculateFoci( a, xPeri ) {
+  return Math.sqrt( Math.pow( a, 2 ) - Math.pow( xPeri, 2 ) );
 }
 function relMouseCoords( a ) {
   let b = 0,
@@ -2333,26 +2333,25 @@ function renderHabitableZone( a, b, c, d ) {
   scale == 200 && renderText( 'CHZ', 'Arial', 'center', orreryWidth / 2 - ( scale / d * c + scale / d * b ) / 2 - 5, canvas.height / 2, 12, orbitPointColor, a );
   scale == 200 && renderText( 'CHZ', 'Arial', 'center', orreryWidth / 2 + ( scale / d * c + scale / d * b ) / 2 + 5, canvas.height / 2, 12, orbitPointColor, a );
 }
-function drawOrbit( planetNumber, ctx, xPeri, yPeri, a, e, lPeri, garb, k, m, r, p, n, l, t, q ) {
+function drawOrbit( planetNumber, ctx, xPeri, yPeri, a, e, lPeri, garb, k, m, r, p, n, scaleFactor, t, q ) {
   // drawOrbit (1, ctx, xPeri, yPeri, a, e, lPeri)
   xPeri = Math.sqrt( 1 - Math.pow( e, 2 ) ) * a;
-  yPeri = calculateFoci( a, xPeri );
-  e = a * Math.cos( toRadians( lPeri ) );
+  yPeri = calculateFoci( a, xPeri );  e = a * Math.cos( toRadians( lPeri ) );
   p = xPeri * Math.sin( toRadians( lPeri ) );
   ctx.save();
   ctx.beginPath();
-  ctx.translate( orreryWidth / 2 + e * scale / l, canvas.height / 2 + p * scale / l );
+  ctx.translate( orreryWidth / 2 + e * scale / scaleFactor, canvas.height / 2 + p * scale / scaleFactor );
   ctx.rotate( toRadians( lPeri ) );
-  scale >= 100 && ( renderPoint( 0 - yPeri * scale / l, 0, 2, 0, 2 * Math.PI, !0, q, q, ctx ),
-  renderText( 'P', 'Arial', 'center', 0 - yPeri * scale / l - 10, -7, 12, q, ctx ),
-  renderPoint( 0 - ( 2 * a + yPeri ) * scale / l, 0, 2, 0, 2 * Math.PI, !0, q, q, ctx ) );
+  scale >= 100 && ( renderPoint( 0 - yPeri * scale / scaleFactor, 0, 2, 0, 2 * Math.PI, !0, q, q, ctx ),
+  renderText( 'P', 'Arial', 'center', 0 - yPeri * scale / scaleFactor - 10, -7, 12, q, ctx ),
+  renderPoint( 0 - ( 2 * a + yPeri ) * scale / scaleFactor, 0, 2, 0, 2 * Math.PI, !0, q, q, ctx ) );
   garb && ( ctx.beginPath(),
-  ctx.rect( 0 - ( 2 * a + yPeri ) * scale / l, 0 - xPeri * scale / l, 2 * a * scale / l, 2 * xPeri * scale / l ),
+  ctx.rect( 0 - ( 2 * a + yPeri ) * scale / scaleFactor, 0 - xPeri * scale / scaleFactor, 2 * a * scale / scaleFactor, 2 * xPeri * scale / scaleFactor ),
   ctx.lineWidth = 1,
   ctx.strokeStyle = 'GoldenRod',
   ctx.stroke(),
   ctx.closePath(),
-  renderLine( 0 - ( 2 * a + yPeri ) * scale / l, 0, ( 0 - yPeri ) * scale / l, 0, 'GoldenRod', 1, !1, ctx ) );
+  renderLine( 0 - ( 2 * a + yPeri ) * scale / scaleFactor, 0, ( 0 - yPeri ) * scale / scaleFactor, 0, 'GoldenRod', 1, !1, ctx ) );
   ctx.beginPath();
   planetInfoIndex != planetNumber ? ( ctx.strokeStyle = k,
   ctx.lineWidth = r ) : mobileDevice ? ( ctx.strokeStyle = t,
@@ -2360,7 +2359,13 @@ function drawOrbit( planetNumber, ctx, xPeri, yPeri, a, e, lPeri, garb, k, m, r,
   ctx.lineWidth = 1,
   m = !0 );
   m && ctx.setLineDash( [2, 3] );
-  ctx.ellipse( 0 - scale / l * ( a + yPeri ), 0, scale / l * a, scale / l * xPeri, 0, 0, 2 * Math.PI, !0 );
+  ctx.ellipse( 0 - scale / scaleFactor * ( a + yPeri ),
+   0,
+    scale / scaleFactor * a,
+     scale / scaleFactor * xPeri,
+      0,
+       0,
+        2 * Math.PI, !0 );
   ctx.stroke();
   ctx.closePath();
   ctx.restore();

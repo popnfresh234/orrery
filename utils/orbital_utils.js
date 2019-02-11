@@ -1,4 +1,8 @@
 const app = ( function () {
+  const SCALE_DESKTOP = 80;
+  const SCALE_MOBILE = 30;
+
+  const getScale = () => SCALE_DESKTOP;
   // https://en.wikipedia.org/wiki/Mean_longitude
   // angle, 360 degres, calculated from mean longitude: l = ϖ + M,
   const calcMeanAnom = ( L, lPeri ) => {
@@ -51,7 +55,7 @@ const app = ( function () {
 
   const calcRadiusVector = ( a, e, trueAnom ) => a * ( 1 - ( e ** 2 ) ) / ( 1 + ( e * Math.cos( toRadians( trueAnom ) ) ) );
 
-  const calcSemiMinorAxis = ( e, a ) => Math.abs( Math.sqrt( Math.abs( ( e ** 2 ) - 1 ) ) * -a );
+  const calcSemiMinorAxis = ( e, a ) => Math.sqrt( 1 - ( e ** 2 ) ) * a;
 
   const calcHelioCentric = ( a, e, i, trueAnom, lascNode, lPeri ) => {
     const r = calcRadiusVector( a, e, trueAnom );
@@ -108,10 +112,9 @@ const app = ( function () {
   };
 
   const calcScaledCoords = ( planet, x, y, WIDTH, HEIGHT ) => {
-    const SCALE = 13;
-    const scaleFactor = planet.scaleFactor ? planet.scaleFactor : 1;
-    const scaledX = ( WIDTH / 2 ) + ( x * SCALE / scaleFactor );
-    const scaledY = ( HEIGHT / 2 ) - ( y * SCALE / scaleFactor );
+    const planetaryScaleFactor = planet.scaleFactor ? planet.scaleFactor : 1;
+    const scaledX = ( WIDTH / 2 ) + ( x * SCALE_DESKTOP / planetaryScaleFactor );
+    const scaledY = ( HEIGHT / 2 ) - ( y * SCALE_DESKTOP / planetaryScaleFactor );
     return { x: scaledX, y: scaledY };
   };
 
@@ -119,10 +122,13 @@ const app = ( function () {
     const MAX = 40;
     const MIN = 5;
     const FLOOR = 5;
-    const r = ( ( rFactor * 100 - MIN ) / ( MAX - MIN ) ) + FLOOR;
+    const r = ( ( rFactor * SCALE_DESKTOP - MIN ) / ( MAX - MIN ) ) + FLOOR;
     return r;
   };
+
   return {
+    getScale,
+    toRadians,
     calcOrbitals,
     calcScaledCoords,
     calcNormR,
@@ -130,6 +136,8 @@ const app = ( function () {
 }() );
 
 module.exports = {
+  getScale: app.getScale,
+  toRadians: app.toRadians,
   calcOrbitals: app.calcOrbitals,
   calcScaledCoords: app.calcScaledCoords,
   calcNormR: app.calcNormR,

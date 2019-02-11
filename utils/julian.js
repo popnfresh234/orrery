@@ -1,9 +1,11 @@
+const moment = require( 'moment' );
+
 const app = ( function () {
-  const getDate = ( julianDate ) => {
-    const testDate = new Date( Date.parse( julianDate ) );
-    const day = testDate.getDate();
-    const year = testDate.getFullYear();
-    const month = testDate.getMonth() + 1;
+  const getDate = ( gregorianDate ) => {
+    const testDate = moment( gregorianDate, 'YYYY-MM-DD' );
+    const day = testDate.date();
+    const year = testDate.year();
+    const month = testDate.month();
     const a = Math.floor( ( 14 - month ) / 12 );
     const y = ( year + 4800 ) - a;
     const m = ( month + ( 12 * a ) ) - 3;
@@ -11,7 +13,7 @@ const app = ( function () {
     return julianDay;
   };
 
-  const getJ2000 = () => getDate( '1/1/2000' );
+  const getJ2000 = () => getDate( '2000/1/1/' );
 
   return {
     getDate,

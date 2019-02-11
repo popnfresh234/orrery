@@ -1,12 +1,14 @@
 const JulianUtils = require( './utils/julian' );
 const OrbitalUtils = require( './utils/orbital_utils' );
 const Constants = require( './utils/constants' );
+const Start = require( './bodies/mapped_planets' );
 const SolarSystem = require( './bodies/mapped_planets' );
 
 const app = ( function () {
-  const SCALE = 50;
   const R_SOL = 10;
   let currentDate = 0;
+  const radians = 0;
+
   const WIDTH = window.innerWidth;
   const HEIGHT = window.innerHeight;
   const canvas = document.getElementById( 'canvas' );
@@ -44,12 +46,11 @@ const app = ( function () {
     planetKeys.forEach( ( planetKey ) => {
       const planet = SolarSystem[planetKey];
       const { x, y } = planet.orbit.genOrbElems.helioCentricCoords;
-      const nX = ( HEIGHT - 0 ) * ( ( x - 0 ) / ( 49.5 * 2 - 0 ) ) + 0;
-      const nY = ( HEIGHT - 0 ) * ( ( y - 0 ) / ( 49.5 * 2 - 0 ) ) + 0;
+      const scaledCoords = OrbitalUtils.calcScaledCoords( planet, x, y, WIDTH, HEIGHT );
+
       // Orbit
-      bgCtx.fillStyle = 'red';
-      const scaledCoords = OrbitalUtils.calcScaledCoords( planet, nX, nY, WIDTH, HEIGHT );
-      bgCtx.fillRect( scaledCoords.x, scaledCoords.y, 1, 1 );
+      // bgCtx.fillStyle = 'red';
+      // bgCtx.fillRect( scaledCoords.x, scaledCoords.y, 1, 1 );
 
       // Planet
       ctx.beginPath();
@@ -67,9 +68,61 @@ const app = ( function () {
     currentDate = JulianUtils.getDate( gregorianDate );
   };
 
-  return { startSimulation, updateSolarSystem, setCurrentDate };
+  const drawOrbits = ( ) => {
+    const planetKeys = Object.keys( SolarSystem );
+    planetKeys.forEach( ( planetKey ) => {
+      const planet = Start[planetKey];
+      updateSolarSystem( JulianUtils.getDate( planet.apiDate ) );
+      const apiX = planet.orbit.genOrbElems.helioCentricCoords.x;
+      const apiY = planet.orbit.genOrbElems.helioCentricCoords.y;
+      const scaledApiCoords = OrbitalUtils.calcScaledCoords( planet, apiX, apiY, WIDTH, HEIGHT );
+      bgCtx.beginPath();
+      bgCtx.fillStyle = planet.color;
+      bgCtx.arc( scaledApiCoords.x, scaledApiCoords.y, 2, 0, 2 * Math.PI );
+      bgCtx.fill();
+
+      updateSolarSystem( JulianUtils.getDate( planet.periDate ) );
+      const periX = planet.orbit.genOrbElems.helioCentricCoords.x;
+      const periY = planet.orbit.genOrbElems.helioCentricCoords.y;
+      const scaledPeriCoords = OrbitalUtils.calcScaledCoords( planet, periX, periY, WIDTH, HEIGHT );
+      bgCtx.beginPath();
+      bgCtx.fillStyle = planet.color;
+      bgCtx.arc( scaledPeriCoords.x, scaledPeriCoords.y, 2, 0, 2 * Math.PI );
+      bgCtx.fill();
+
+      const centerX = ( apiX + periX ) / 2;
+      const centerY = ( apiY + periY ) / 2;
+      const scaledCenterCoords = OrbitalUtils.calcScaledCoords( planet, centerX, centerY, WIDTH, HEIGHT );
+      bgCtx.fillStyle = planet.color;
+      bgCtx.arc( scaledCenterCoords.x, scaledCenterCoords.y, 2, 0, 2 * Math.PI );
+      bgCtx.fill();
+
+      bgCtx.beginPath();
+      bgCtx.strokeStyle = planet.color;
+      bgCtx.ellipse(
+        scaledCenterCoords.x,
+        scaledCenterCoords.y,
+        planet.orbit.genOrbElems.a * OrbitalUtils.getScale() / planet.scaleFactor,
+        planet.orbit.genOrbElems.b * OrbitalUtils.getScale() / planet.scaleFactor,
+        OrbitalUtils.toRadians( planet.orbit.genOrbElems.lPeri ),
+        0,
+        2 * Math.PI,
+      );
+      bgCtx.stroke();
+    } );
+    setTimeout( drawOrbit, 0 );
+  };
+
+  return {
+    startSimulation,
+    updateSolarSystem,
+    setCurrentDate,
+    drawOrbits,
+  };
 }() );
 
 
-app.setCurrentDate( '1/20/2022' );
-app.startSimulation( );
+app.setCurrentDate( '2022/1/20' );
+app.startSimulation();
+app.drawOrbits();
+
