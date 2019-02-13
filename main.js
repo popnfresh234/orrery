@@ -3,6 +3,7 @@ const OrbitalUtils = require( './utils/orbital_utils' );
 const Constants = require( './utils/constants' );
 const Start = require( './bodies/mapped_planets' );
 const SolarSystem = require( './bodies/mapped_planets' );
+const PlutoOrbit = require( './utils/pluto_orbit' );
 
 const app = ( function () {
   const R_SOL = 10;
@@ -48,7 +49,7 @@ const app = ( function () {
       const { x, y } = planet.orbit.genOrbElems.helioCentricCoords;
       const scaledCoords = OrbitalUtils.calcScaledCoords( planet, x, y, WIDTH, HEIGHT );
 
-      // Orbit
+      // Orbit trails
       // bgCtx.fillStyle = 'red';
       // bgCtx.fillRect( scaledCoords.x, scaledCoords.y, 1, 1 );
 
@@ -72,6 +73,8 @@ const app = ( function () {
     const planetKeys = Object.keys( SolarSystem );
     planetKeys.forEach( ( planetKey ) => {
       const planet = Start[planetKey];
+
+      // Draw perihelion
       updateSolarSystem( JulianUtils.getDate( planet.apiDate ) );
       const apiX = planet.orbit.genOrbElems.helioCentricCoords.x;
       const apiY = planet.orbit.genOrbElems.helioCentricCoords.y;
@@ -80,7 +83,9 @@ const app = ( function () {
       bgCtx.fillStyle = planet.color;
       bgCtx.arc( scaledApiCoords.x, scaledApiCoords.y, 2, 0, 2 * Math.PI );
       bgCtx.fill();
+      bgCtx.fillText( 'A', scaledApiCoords.x + 5, scaledApiCoords.y + 3 );
 
+      // Draw aphelion
       updateSolarSystem( JulianUtils.getDate( planet.periDate ) );
       const periX = planet.orbit.genOrbElems.helioCentricCoords.x;
       const periY = planet.orbit.genOrbElems.helioCentricCoords.y;
@@ -89,28 +94,45 @@ const app = ( function () {
       bgCtx.fillStyle = planet.color;
       bgCtx.arc( scaledPeriCoords.x, scaledPeriCoords.y, 2, 0, 2 * Math.PI );
       bgCtx.fill();
+      bgCtx.fillText( 'P', scaledPeriCoords.x + 5, scaledPeriCoords.y + 3 );
+
 
       const centerX = ( apiX + periX ) / 2;
       const centerY = ( apiY + periY ) / 2;
       const scaledCenterCoords = OrbitalUtils.calcScaledCoords( planet, centerX, centerY, WIDTH, HEIGHT );
-      bgCtx.fillStyle = planet.color;
-      bgCtx.arc( scaledCenterCoords.x, scaledCenterCoords.y, 2, 0, 2 * Math.PI );
-      bgCtx.fill();
 
-      bgCtx.beginPath();
-      bgCtx.strokeStyle = planet.color;
-      bgCtx.ellipse(
-        scaledCenterCoords.x,
-        scaledCenterCoords.y,
-        planet.orbit.genOrbElems.a * OrbitalUtils.getScale() / planet.scaleFactor,
-        planet.orbit.genOrbElems.b * OrbitalUtils.getScale() / planet.scaleFactor,
-        OrbitalUtils.toRadians( planet.orbit.genOrbElems.lPeri ),
-        0,
-        2 * Math.PI,
-      );
-      bgCtx.stroke();
+      // Draw centers
+      // bgCtx.fillStyle = planet.color;
+      // bgCtx.arc( scaledCenterCoords.x, scaledCenterCoords.y, 2, 0, 2 * Math.PI );
+      // bgCtx.fill();
+
+      // Draw orbits except for Pluto, which doesn't fit ellipse well
+      if ( planet.name !== 'pluto' ) {
+        bgCtx.beginPath();
+        bgCtx.strokeStyle = planet.color;
+        bgCtx.ellipse(
+          scaledCenterCoords.x,
+          scaledCenterCoords.y,
+          planet.orbit.genOrbElems.a * OrbitalUtils.getScale() / planet.scaleFactor,
+          planet.orbit.genOrbElems.b * OrbitalUtils.getScale() / planet.scaleFactor,
+          OrbitalUtils.toRadians( planet.orbit.genOrbElems.lPeri ),
+          0,
+          2 * Math.PI,
+        );
+        bgCtx.stroke();
+      }
     } );
-    setTimeout( drawOrbit, 0 );
+  };
+
+  const drawPlutoOrbit = () => {
+    PlutoOrbit.forEach( ( position, index ) => {
+      if ( index % 2 ) {
+        bgCtx.beginPath();
+        const scaledCoords = OrbitalUtils.calcScaledCoords( SolarSystem.pluto, position.x, position.y, WIDTH, HEIGHT );
+        bgCtx.fillStyle = SolarSystem.pluto.color;
+        bgCtx.fillRect( scaledCoords.x, scaledCoords.y, 1, 1 );
+      }
+    } );
   };
 
   return {
@@ -118,11 +140,13 @@ const app = ( function () {
     updateSolarSystem,
     setCurrentDate,
     drawOrbits,
+    drawPlutoOrbit,
   };
 }() );
 
 
 app.setCurrentDate( '2022/1/20' );
 app.startSimulation();
+app.drawPlutoOrbit();
 app.drawOrbits();
 
